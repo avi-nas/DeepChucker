@@ -77,14 +77,14 @@ Debugging network traffic on iOS usually means setting up desktop proxies (like 
 Add DeepChucker directly in Xcode via **File > Add Package Dependencies...**:
 
 ```text
-https://github.com/your-org/DeepChucker.git
+https://github.com/avi-nas/DeepChucker
 ```
 
 Or add it to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/your-org/DeepChucker.git", from: "1.0.0")
+    .package(url: "https://github.com/avi-nas/DeepChucker", from: "1.0.0")
 ]
 ```
 
