@@ -1,0 +1,61 @@
+name: iOS Tests
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select available iPhone simulator
+        id: simulator
+        run: |
+          SIMULATOR_ID="$(python3 - <<'PY'
+          import json
+          import subprocess
+
+          devices = json.loads(
+            subprocess.check_output(
+              ["xcrun", "simctl", "list", "devices", "available", "-j"],
+              text=True,
+            )
+          )["devices"]
+          candidates = []
+
+          for runtime, runtime_devices in devices.items():
+            if "iOS" not in runtime:
+              continue
+            for device in runtime_devices:
+              if not device.get("isAvailable"):
+                continue
+              if not device["name"].startswith("iPhone"):
+                continue
+              runtime_version = runtime.split("iOS-")[-1].replace("-", ".")
+              version_key = tuple(int(part) for part in runtime_version.split("."))
+              candidates.append((version_key, device["name"], device["udid"]))
+
+          if not candidates:
+            raise SystemExit("No available iPhone simulator found")
+
+          candidates.sort()
+          print(candidates[-1][2], end="")
+          PY
+          )"
+
+          echo "id=$SIMULATOR_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Run DeepChuckerDemo tests
+        run: |
+          xcodebuild test \
+            -project DeepChucker.xcodeproj \
+            -scheme DeepChuckerDemo \
+            -destination "id=${{ steps.simulator.outputs.id }}" \
+            CODE_SIGNING_ALLOWED=NO
