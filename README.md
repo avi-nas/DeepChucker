@@ -1,24 +1,33 @@
 # DeepChucker 🚀
-### The In-App HTTP & GraphQL Network Inspector for iOS (Chucker for iOS)
 
 [![Swift](https://img.shields.io/badge/Swift-5.9%2B%20%7C%206.0-orange.svg?style=flat-square&logo=swift)](https://swift.org)
 [![Platform](https://img.shields.io/badge/Platforms-iOS%2016.0%2B-blue.svg?style=flat-square&logo=apple)](https://developer.apple.com/ios/)
 [![SPM](https://img.shields.io/badge/Swift_Package_Manager-compatible-brightgreen.svg?style=flat-square)](https://swift.org/package-manager/)
 [![Architecture](https://img.shields.io/badge/Pure_Swift-100%25-green.svg?style=flat-square)](#)
-[![License](https://img.shields.io/badge/License-MIT-lightgrey.svg?style=flat-square)](#)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg?style=flat-square)](http://makeapullrequest.com)
 
-> **Looking for the iOS equivalent of Android's [Chucker](https://github.com/ChuckerTeam/chucker)?**  
-> **DeepChucker** brings that exact seamless in-app HTTP inspection experience to iOS—built from the ground up in **100% pure Swift**, with **first-class GraphQL support**, and zero proxy/certificate configuration.
+_The In-App HTTP & GraphQL Network Inspector for iOS_
 
----
+- [DeepChucker 🚀](#deepchucker-)
+  - [Getting Started 👣](#getting-started-)
+    - [Installation 🛠️](#installation-️)
+    - [Initialize on App Launch 🚀](#initialize-on-app-launch-)
+  - [Features 🧰](#features-)
+    - [GraphQL Inspection & Search 🔮](#graphql-inspection--search-)
+    - [How to Open DeepChucker 📱](#how-to-open-deepchucker-)
+  - [Configure 🎨](#configure-)
+    - [Ignore Noise & Telemetry 🛡️](#ignore-noise--telemetry-️)
+    - [Environment Variable Override ⚙️](#environment-variable-override-️)
+  - [Compatibility 🤝](#compatibility-)
+  - [FAQ ❓](#faq-)
+  - [Contributing 🤝](#contributing-)
+  - [Acknowledgments 🌸](#acknowledgments-)
 
-## 🌟 Why DeepChucker?
+**DeepChucker** simplifies the inspection of **HTTP(S) and GraphQL requests/responses** fired by your iOS app. Built from the ground up in **100% pure Swift**, DeepChucker automatically intercepts network traffic inside your application and provides a native SwiftUI interface for inspecting, searching, and sharing network calls—with zero desktop proxy or SSL certificate setup.
 
-Debugging network traffic on iOS usually means setting up desktop proxies (like Charles or Proxyman), installing custom SSL certificates, and wrestling with certificate pinning or VPN configurations.
+Apps using DeepChucker can trigger the inspector UI anytime by **shaking the device** or calling `DeepChucker.show()` directly from a custom debug menu.
 
-**DeepChucker inspects traffic directly inside your app on physical devices and simulators.**
-
-```
+```text
 ┌────────────────────────────────────────────────────────┐
 │  REST API   ──► [ GET /api/v1/users ]      Status: 200 │
 │  GraphQL    ──► [ GQL ] GetUserProfile     Status: 200 │  ◄── DeepChucker inspects both
@@ -26,53 +35,13 @@ Debugging network traffic on iOS usually means setting up desktop proxies (like 
 └────────────────────────────────────────────────────────┘
 ```
 
-### ⚡ Feature Comparison
-
-| Feature | Android Chucker | Desktop Proxies (Charles/Proxyman) | **DeepChucker (iOS)** |
-|:---|:---:|:---:|:---:|
-| **Platform** | Android | Mac / Windows | **iOS 16+** |
-| **In-App Inspection UI** | ✅ Yes | ❌ External desktop only | ✅ **Native SwiftUI UI** |
-| **SSL / Certificate Setup** | None needed | Requires trusted root CA | **None needed** |
-| **GraphQL Operation Recognition** | ⚠️ Generic POST only | ⚠️ Generic POST only | ✅ **Dedicated GQL Inspector** |
-| **GraphQL Search by Operation** | ❌ No | ⚠️ Query body search | ✅ **Instant Query Name Search** |
-| **cURL & Postman v2.1 Export** | ✅ Yes | Partial | ✅ **1-Click Share Sheet** |
-| **Works on Real Devices in Field** | ✅ Yes | ❌ Requires same Wi-Fi / VPN | ✅ **Anywhere (QA, Beta, Field)** |
-| **Pure Swift (No Obj-C)** | N/A | N/A | ✅ **100% Swift** |
-
 ---
 
-## 🎯 Key Capabilities
+## Getting Started 👣
 
-- 🔮 **First-Class GraphQL Inspector & Search**:
-  - Automatically extracts `operationName` from `POST` JSON payloads, `GET` query parameters, and batch GraphQL requests.
-  - Falls back to query syntax parsing (`query <Name>`, `mutation <Name>`) if `operationName` is omitted.
-  - Dedicated **GraphQL tab**: view pretty-printed queries, JSON variables, and operation names with one-tap copy.
-- 🔎 **Unified Instant Search**:
-  - Search both REST API endpoints and GraphQL operation names in one unified search bar.
-- 🚀 **1-Line Startup**:
-  - Call `DeepChucker.start()` in your app launch—no complex configuration or boilerplate.
-- 🔄 **Automatic Interception**:
-  - Intercepts standard `URLSession`, **Alamofire**, **Apollo iOS GraphQL**, and other third-party HTTP clients.
-- 📱 **Native SwiftUI Design**:
-  - Fluid, responsive interface supporting both Light and Dark mode, status code pills (2xx, 3xx, 4xx, 5xx), and duration metrics.
-- 📤 **Instant Export & Sharing**:
-  - Share individual calls or filtered lists as **cURL commands**, **Postman Collections (v2.1)**, or formatted text.
-- 🛡️ **Privacy & Whitelisting**:
-  - Exclude high-frequency telemetry/analytics domains using `DeepChucker.ignoredHosts`.
+### Installation 🛠️
 
----
-
-## 📦 Requirements
-
-- **iOS 16.0+**
-- **Swift 5.9+ / Swift 6**
-- **Xcode 15+**
-
----
-
-## 🛠️ Installation
-
-### Swift Package Manager (SPM)
+DeepChucker is distributed via **Swift Package Manager (SPM)**.
 
 Add DeepChucker directly in Xcode via **File > Add Package Dependencies...**:
 
@@ -84,11 +53,11 @@ Or add it to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/avi-nas/DeepChucker", from: "1.0.0")
+    .package(url: "https://github.com/avi-nas/DeepChucker", from: "1.0.2")
 ]
 ```
 
-Add `DeepChucker` to your target dependencies:
+Then add `DeepChucker` to your target dependencies:
 
 ```swift
 .target(
@@ -99,30 +68,12 @@ Add `DeepChucker` to your target dependencies:
 )
 ```
 
----
+### Initialize on App Launch 🚀
 
-## 🚀 Quick Start
-
-### 1. Initialize on App Launch
-
-#### UIKit (`AppDelegate.swift`)
-```swift
-import UIKit
-import DeepChucker
-
-@main
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        #if DEBUG
-        DeepChucker.start()
-        #endif
-        return true
-    }
-}
-```
+To start capturing network traffic, initialize DeepChucker when your app launches. Wrap it in `#if DEBUG` to isolate DeepChucker from production builds:
 
 #### SwiftUI (`App.swift`)
+
 ```swift
 import SwiftUI
 import DeepChucker
@@ -132,6 +83,8 @@ struct MyApp: App {
     init() {
         #if DEBUG
         DeepChucker.start()
+        DeepChucker.setEnabled(true)
+        DeepChucker.shakeEnabled = true
         #endif
     }
 
@@ -143,14 +96,62 @@ struct MyApp: App {
 }
 ```
 
+#### UIKit (`AppDelegate.swift`)
+
+```swift
+import UIKit
+import DeepChucker
+
+@main
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        #if DEBUG
+        DeepChucker.start()
+        DeepChucker.setEnabled(true)
+        DeepChucker.shakeEnabled = true
+        #endif
+        return true
+    }
+}
+```
+
+**That's it!** 🎉 DeepChucker will now automatically record all HTTP and GraphQL interactions made by your app.
+
 ---
 
-## 📱 How to Open DeepChucker
+## Features 🧰
 
-### 1. Shake Your Device
-Simply shake your physical device or press `Ctrl + Cmd + Z` in the iOS Simulator.
+* **iOS 16.0+** & **Swift 5.9+ / 6.0** compatible
+* **100% Pure Swift** architecture (zero Objective-C runtime hacks)
+* Easy to integrate (quick startup configuration)
+* Works **out of the box** with zero proxy or SSL certificate setup
+* **First-class GraphQL support** with automatic `operationName` extraction 🔮
+* **Unified instant search** across REST endpoints and GraphQL operation names 🔎
+* **Native SwiftUI design** with Light & Dark mode, status code pills (2xx, 3xx, 4xx, 5xx), and duration metrics 📱
+* **1-Click Export & Sharing** as **cURL commands**, **Postman Collections (v2.1)**, or formatted text 📤
+* **Domain Whitelisting / Filtering** to ignore noisy analytics or telemetry hosts 🛡️
 
-### 2. Programmatic Presentation (Custom Debug Button / Menu)
+### GraphQL Inspection & Search 🔮
+
+Standard network tools list every GraphQL call as an identical `POST /graphql` request. DeepChucker automatically parses `POST` JSON payloads, `GET` query parameters, batch requests, and raw query definitions (`query <Name>`, `mutation <Name>`) to surface the operation name right in the request list:
+
+```json
+{
+  "operationName": "FetchUserProfile",
+  "query": "query FetchUserProfile(\$id: ID!) { user(id: \$id) { name email avatar } }",
+  "variables": { "id": "42" }
+}
+```
+
+* **In the List View**: Appears as `[GQL] FetchUserProfile` with a dedicated badge.
+* **In the Search Bar**: Typing `FetchUserProfile` immediately isolates the operation from thousands of REST calls.
+* **In the Detail View**: Features a dedicated **GraphQL tab** displaying the **Operation Name** (one-tap copy), **Formatted Query**, and **Pretty-Printed JSON Variables**.
+
+### How to Open DeepChucker 📱
+
+1. **Shake Gesture**: Shake your physical iOS device or press `Ctrl + Cmd + Z` in the iOS Simulator.
+2. **Programmatic Presentation**: Present or dismiss the inspector from your own debug menu or floating button:
+
 ```swift
 // Present DeepChucker UI
 DeepChucker.show()
@@ -161,50 +162,31 @@ DeepChucker.dismiss()
 
 ---
 
-## 🔮 GraphQL Inspection & Search in Action
+## Configure 🎨
 
-### Automatic Operation Detection
-Standard iOS network tools treat all GraphQL requests as identical `POST /graphql` calls. DeepChucker parses the payload and surfaces the operation name prominently:
-
-```json
-{
-  "operationName": "FetchUserProfile",
-  "query": "query FetchUserProfile($id: ID!) { user(id: $id) { name email avatar } }",
-  "variables": { "id": "42" }
-}
-```
-
-- **In the List View**: Appears as `[GQL] FetchUserProfile` with a distinctive badge.
-- **In the Search Bar**: Typing `FetchUserProfile` immediately isolates this call from thousands of REST requests.
-- **In the Detail View**: Displays a dedicated **GraphQL section** showing:
-  - **Operation Name** (Tap to copy)
-  - **Monospace Query** (Formatted and easy to read)
-  - **JSON Variables** (Pretty-printed)
-
----
-
-## ⚙️ Configuration & Customization
+You can customize DeepChucker's behavior at startup to fit your workflow:
 
 ```swift
 #if DEBUG
-// 1. Start interception
+// 1. Start interception & enable DeepChucker
 DeepChucker.start()
+DeepChucker.setEnabled(true)
 
-// 2. Ignore analytics or noise domains (supports suffix matching)
+// 2. Enable or disable shake gesture trigger
+DeepChucker.shakeEnabled = true
+
+// 3. Ignore analytics or noise domains (supports suffix matching)
 DeepChucker.ignoredHosts = [
     "google-analytics.com",
     "telemetry.internal.company.com",
     "crashlytics.com"
 ]
 
-// 3. Limit stored calls in memory (default is unlimited)
+// 4. Limit stored calls in memory (default is unlimited)
 DeepChucker.limit = 250
 
-// 4. Pre-fill default search filter
+// 5. Pre-fill default search filter
 DeepChucker.defaultFilter = "api/v2"
-
-// 5. Disable shake gesture if you prefer only button triggers
-DeepChucker.shakeEnabled = false
 
 // 6. Clear captured requests programmatically
 DeepChucker.clearRequests {
@@ -213,24 +195,60 @@ DeepChucker.clearRequests {
 #endif
 ```
 
-### Environment Variable Override
-You can disable shake detection across test schemes by adding the environment variable:
+### Ignore Noise & Telemetry 🛡️
+
+**Warning**: The data captured by DeepChucker may contain sensitive information such as `Authorization` headers, cookies, and personal data in request/response bodies. It is intended **strictly for development and QA testing**, not production releases.
+
+To prevent high-frequency telemetry or third-party SDK traffic from cluttering your inspector, configure `DeepChucker.ignoredHosts`:
+
+```swift
+DeepChucker.ignoredHosts = ["segment.io", "mixpanel.com"]
+```
+
+### Environment Variable Override ⚙️
+
+You can disable the shake gesture across specific Xcode schemes or UI test targets without changing code by setting the environment variable in your scheme:
+
 ```text
 DEEPCHUCKER_SHAKE_ENABLED = NO
 ```
 
 ---
 
-## 🤝 Works Seamlessly With
+## Compatibility 🤝
 
-- **Standard `URLSession`** (`URLSession.shared` & custom sessions)
-- **Alamofire**
-- **Apollo iOS GraphQL**
-- **Moya**
-- **Swift OpenAPI Generator**
+DeepChucker intercepts traffic seamlessly across popular iOS networking stacks:
+
+* **Standard `URLSession`** (`URLSession.shared` & custom configurations)
+* **Alamofire**
+* **Apollo iOS GraphQL**
+* **Moya**
+* **Swift OpenAPI Generator**
 
 ---
 
-## 📄 License
+## FAQ ❓
 
-DeepChucker is open-source software available under the [MIT License](LICENSE).
+* **Why aren't requests from my custom `URLSession` appearing?**
+  Make sure `DeepChucker.start()` and `DeepChucker.setEnabled(true)` are called **before** initializing your custom `URLSession` or third-party network client (such as Alamofire or Apollo) so the protocol interceptor is registered in time.
+
+* **Does DeepChucker impact production builds?**
+  When wrapped in `#if DEBUG` (or toggled off via `DeepChucker.setEnabled(false)`), DeepChucker is inactive in release builds. For complete isolation, only link or initialize DeepChucker in Debug configurations.
+
+* **How do I export a request to Postman?**
+  Open any request (or filter a list of requests), tap the **Share / Export** icon in the top-right corner, and choose **Export as cURL** or **Postman Collection (v2.1)**.
+
+---
+
+## Contributing 🤝
+
+**We're looking for contributors! Don't be shy.** 😁 Feel free to open issues or pull requests to help improve DeepChucker.
+
+* When reporting a new **Issue**, please attach **screenshots, videos, or sample payloads** demonstrating the problem.
+* When submitting a **Pull Request**, ensure your code compiles cleanly on **Xcode 15+ (Swift 5.9+ / 6.0)** and all tests pass.
+
+---
+
+## Acknowledgments 🌸
+
+* Big thanks to all contributors who help make iOS network debugging effortless ❤️
